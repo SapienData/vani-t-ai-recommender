@@ -2,10 +2,14 @@ from flask import Flask, send_from_directory, request, jsonify
 from flask_cors import CORS
 import os
 
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
+
 app = Flask(__name__, static_folder="build", static_url_path="")
 CORS(app)
 
-# Sample VANI-T products
+# VANI-T sample products
 products_db = [
     {"name": "Wonder Balm Melting Cleanser", "skin_type": ["dry","sensitive","all"], "category":"cleanser", "url":"https://nationalsalonsupplies.com.au/shop/beauty/skincare/cleansers/vani-t-wonder-balm-melting-cleanser-80gm/"},
     {"name": "Face Base Glazing Milk", "skin_type": ["dry","all"], "category":"serum", "url":"https://vani-t.com/products/face-base-glazing-milk"},
