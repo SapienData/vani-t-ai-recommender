@@ -1,8 +1,9 @@
-from flask import Flask, request, jsonify
+from flask import Flask, send_from_directory, request, jsonify
 from flask_cors import CORS
+import os
 
-app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "*"}})
+app = Flask(__name__, static_folder="build", static_url_path="")
+CORS(app)
 
 # Sample VANI-T products
 products_db = [
@@ -14,10 +15,7 @@ products_db = [
     {"name": "Glow+ Self Tan Drops", "skin_type": ["all"], "category":"sunscreen", "url":"https://www.ebay.com.au/itm/167642975524"}
 ]
 
-@app.route("/")
-def home():
-    return jsonify({"message": "Welcome to VANI-T AI Recommender API "})
-
+# API endpoint
 @app.route("/recommend", methods=["POST"])
 def recommend():
     data = request.get_json()
@@ -34,6 +32,15 @@ def recommend():
         recs = products_db[:2]
 
     return jsonify(recs)
+
+# Serve React build
+@app.route("/", defaults={"path": ""})
+@app.route("/<path:path>")
+def serve(path):
+    if path != "" and os.path.exists(os.path.join(app.static_folder, path)):
+        return send_from_directory(app.static_folder, path)
+    else:
+        return send_from_directory(app.static_folder, "index.html")
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
